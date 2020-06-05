@@ -4,7 +4,7 @@
  * Displays a name badge.
  * 
  * When using Spence Konde's ATTinyCore https://github.com/SpenceKonde/ATTinyCore
- * and using a chip without Optiboot, with LTO enabled, this sketch takes 8160 bytes of flash.
+ * and using a chip without Optiboot, with LTO enabled, this sketch takes 8166 bytes of flash.
  * 
  * The Name Badge contains 5 screens
  * A screen is a list of 16 items
@@ -547,7 +547,7 @@ void drawTextInsertDeleteMenu(void) {
   showTextSelection(currentItemCharacterPos, currentItemCharacterPos);
 }
 void textInsertAction(void) {
-  if (itemLength == 31) return;
+  if ((itemLength == 31) || (itemOffset == 0)) return;
   // All items that start after get shifted. All items that start before and end on or after get lengthened
   uint8_t insertPosition = itemOffset + currentItemCharacterPos;
   uint8_t s = currentScreen;
