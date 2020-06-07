@@ -20,14 +20,14 @@ struct Menu {
 const char ITEM_NAME[] PROGMEM = { "Item" };
 const char NEXT_NAME[] PROGMEM = { "Next" };
 const char PREV_NAME[] PROGMEM = { "Prev" };
+const char SELECT_TEXT_NAME[] PROGMEM = { "Select Text" };
 const char EDIT_ITEM_NAME[] PROGMEM = { "Edit Item" };
-const char ALTER_TEXT_NAME[] PROGMEM = { "Alter Text" };
 const char SETTINGS_NAME[] PROGMEM = { "Settings" };
 
 const char CHANGE_LOCATION_NAME[] PROGMEM = { "Change Location" };
 const char CHANGE_FONT_NAME[] PROGMEM = { "Change Font" };
 const char CHANGE_SIZE_NAME[] PROGMEM = { "Change Size" };
-const char SELECT_TEXT_NAME[] PROGMEM = { "Select Text" };
+const char ALTER_TEXT_NAME[] PROGMEM = { "Alter Text" };
 
 const char LEFT_NAME[] PROGMEM = { "Left" };
 const char RIGHT_NAME[] PROGMEM = { "Right" };
@@ -42,7 +42,6 @@ const char INSERT_DELETE_NAME[] PROGMEM = { "Insert/Delete" };
 
 const char NEXT_LETTER_NAME[] PROGMEM = { "Next Letter" };
 const char PREV_LETTER_NAME[] PROGMEM = { "Prev Letter" };
-const char CHANGE_CASE_NAME[] PROGMEM = { "Change Case" };
 
 const char INSERT_NAME[] PROGMEM = { "Insert" };
 const char DELETE_NAME[] PROGMEM = { "Delete" };
@@ -75,17 +74,17 @@ Settings
 void drawItemMenu(void);
 void nextItemAction(void);
 void prevItemAction(void);
+void selectTextAction(void);
 void editItemAction(void);
-void alterTextAction(void);
 void settingsAction(void);
 
 const MenuItem itemSelectionMenuItems[5] PROGMEM = {
-// name             action fn
-  {NEXT_NAME,       nextItemAction  },
-  {PREV_NAME,       prevItemAction  },
-  {EDIT_ITEM_NAME,  editItemAction  },
-  {ALTER_TEXT_NAME, alterTextAction },
-  {SETTINGS_NAME,   settingsAction  }
+// name              action fn
+  {NEXT_NAME,        nextItemAction   },
+  {PREV_NAME,        prevItemAction   },
+  {SELECT_TEXT_NAME, selectTextAction },
+  {EDIT_ITEM_NAME,   editItemAction   },
+  {SETTINGS_NAME,    settingsAction   }
 };
 
 /*
@@ -104,7 +103,7 @@ Alter Text
 void changeLocationAction(void);
 void changeFontAction(void);
 void changeSizeAction(void);
-void selectTextAction(void);
+void alterTextAction(void);
 
 const MenuItem editItemMenuItems[5] PROGMEM = {
 // name                  action fn
@@ -159,13 +158,12 @@ void selectTextRightAction(void);
 void selectTextLongerAction(void);
 void selectTextShorterAction(void);
 
-const MenuItem selectTextMenuItems[5] PROGMEM = {
+const MenuItem selectTextMenuItems[4] PROGMEM = {
 // name             action fn
   {LEFT_NAME,       selectTextLeftAction    },
   {RIGHT_NAME,      selectTextRightAction   },
   {LONGER_NAME,     selectTextLongerAction  },
-  {SHORTER_NAME,    selectTextShorterAction },
-  {ALTER_TEXT_NAME, alterTextAction         }
+  {SHORTER_NAME,    selectTextShorterAction }
 };
 
 /*
@@ -207,13 +205,13 @@ Change Case
 #define TEXT_EDIT_MODE 6
 void textEditNextAction(void);
 void textEditPrevAction(void);
-void textEditChangeCaseAction(void);
 
-const MenuItem textEditMenuItems[3] PROGMEM = {
+const MenuItem textEditMenuItems[4] PROGMEM = {
 // name              action fn
-  {NEXT_LETTER_NAME, textEditNextAction       },
-  {PREV_LETTER_NAME, textEditPrevAction       },
-  {CHANGE_CASE_NAME, textEditChangeCaseAction }
+  {LEFT_NAME,        textEditLeftAction  },
+  {RIGHT_NAME,       textEditRightAction },
+  {NEXT_LETTER_NAME, textEditNextAction  },
+  {PREV_LETTER_NAME, textEditPrevAction  }
 };
 
 /*
@@ -274,7 +272,7 @@ const Menu menus[9] PROGMEM = {
   {drawItemMenu,             2,   4, changeLocationMenuItems   },
   {drawSelectTextMenu,       2,   4, selectTextMenuItems       },
   {drawTextEditOptionsMenu,  2,   4, textEditOptionsMenuItems  },
-  {drawTextEditOptionsMenu,  5,   3, textEditMenuItems         },
+  {drawTextEditOptionsMenu,  5,   4, textEditMenuItems         },
   {drawTextInsertDeleteMenu, 5,   4, textInsertDeleteMenuItems },
   {drawSettingsMenu,         0,   3, settingsMenuItems         },
 };

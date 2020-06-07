@@ -7,6 +7,7 @@
 #define CLOSE_MENU_SYMBOL '0'
 #define ACTIVE_MENU_SYMBOL '6'
 #define SELECTED_LETTER_SYMBOL '9'
+#define WORKING_SYMBOL ' '
 
 const uint8_t symbolFontData [] PROGMEM = {
 

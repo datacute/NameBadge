@@ -4,7 +4,7 @@
  * Displays a name badge.
  * 
  * When using Spence Konde's ATTinyCore https://github.com/SpenceKonde/ATTinyCore
- * and using a chip without Optiboot, with LTO enabled, this sketch takes 8166 bytes of flash.
+ * and using a chip without Optiboot, with LTO enabled, this sketch takes 8132 bytes of flash.
  * 
  * The Name Badge contains 5 screens
  * A screen is a list of 16 items
@@ -214,6 +214,7 @@ static void invokeMenuItemAction(void) {
       currentMode = pgm_read_byte(&(menus[currentMode].exitMode));
     }
   } else {
+    indicateWorking(); // some actions take a while
     ((ActionFunc)pgm_read_ptr(&(menuItems[menuLine - 1].actionFn)))();
   }
 }
@@ -310,6 +311,11 @@ static void redrawMenuCursor(void) {
   }
 }
 
+static void indicateWorking(void) {
+  oled.setCursor(120,menuLine + 1);
+  oled.write(WORKING_SYMBOL);
+}
+
 static void switchToMode(uint16_t m) {
   currentMode = m;
   menuLine = 0;
@@ -390,11 +396,15 @@ void prevItemAction(void) {
   currentScreenItem--;
   currentItemChanged();
 }
-void editItemAction(void) {
-  switchToMode(EDIT_ITEM_MODE);
+void selectTextAction(void) {
+  if (itemLength == 0 && itemOffset == 0) {
+    itemOffset = RESERVED_TEXT;
+  }
+  switchToMode(SELECT_TEXT_MODE);
 }
-void alterTextAction(void) {
-  switchToMode(TEXT_EDIT_OPTIONS_MODE);
+void editItemAction(void) {
+  if (itemLength == 0) return;
+  switchToMode(EDIT_ITEM_MODE);
 }
 void settingsAction(void) {
   switchToMode(SETTINGS_MENU_MODE);
@@ -414,8 +424,8 @@ void changeSizeAction(void) {
   itemDoubleSize ^= 0x80; //!itemDoubleSize;
   preview();
 }
-void selectTextAction(void) {
-  switchToMode(SELECT_TEXT_MODE);
+void alterTextAction(void) {
+  switchToMode(TEXT_EDIT_OPTIONS_MODE);
 }
 
 
@@ -450,7 +460,7 @@ void drawSelectTextMenu(void) {
   showTextSelection(0, itemLength > 0 ? itemLength - 1 : 0);
 }
 void selectTextLeftAction(void) {
-  if (itemOffset > 16) {
+  if (itemOffset > RESERVED_TEXT) {
     itemOffset--;
     saveItem();
   }
@@ -528,15 +538,6 @@ void textEditPrevAction(void) {
   currentLetter--;
   updateCurrentLetter();
 }
-void textEditChangeCaseAction(void) {
-  if ((currentLetter >= 'A') && (currentLetter <= 'Z')) {
-    currentLetter += ('a' - 'A');
-    updateCurrentLetter();
-  } else if ((currentLetter >= 'a') && (currentLetter <= 'z')) {
-    currentLetter -= ('a' - 'A');
-    updateCurrentLetter();
-  }
-}
 static void updateCurrentLetter(void) {
   currentLetter = limitToFont(currentLetter);
   EEPROM.write(itemAddress + currentItemCharacterPos, currentLetter);
@@ -557,19 +558,14 @@ void textInsertAction(void) {
       currentScreenItem = item;
       currentItemChanged();
       if (itemOffset <= insertPosition) {
-        if ((itemOffset + itemLength > insertPosition) && (itemLength < 31) && (itemLength > 0)) {
-          itemLength++;
-          saveItem();
+        if (itemOffset + itemLength > insertPosition) {
+          selectTextLongerAction();
         }
       } else {
-        if (itemOffset < 255) {
-          itemOffset++;
-          saveItem();
+        if ((uint16_t)itemOffset + itemLength >= 256) {
+          selectTextShorterAction();
         }
-        if ((uint16_t)itemOffset + itemLength > 256) {
-          itemLength--;
-          saveItem();
-        }
+        selectTextRightAction();
       }
     }
   }
@@ -583,8 +579,8 @@ void textInsertAction(void) {
   currentItemChanged();
 }
 void textDeleteAction(void) {
-  // All items that start after get shifted. All items that start before and end on or after get shortened
   if (itemLength == 0) return;
+  // All items that start after get shifted. All items that start before and end on or after get shortened
   uint8_t insertPosition = itemOffset + currentItemCharacterPos;
   uint8_t s = currentScreen;
   uint8_t i = currentScreenItem;
@@ -594,12 +590,10 @@ void textDeleteAction(void) {
       currentItemChanged();
       if (itemOffset <= insertPosition) {
         if (itemOffset + itemLength > insertPosition) {
-          itemLength--;
-          saveItem();
+          selectTextShorterAction();
         }
       } else {
-        itemOffset--;
-        saveItem();
+        selectTextLeftAction();
       }
     }
   }

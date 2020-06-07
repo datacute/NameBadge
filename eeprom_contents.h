@@ -65,6 +65,8 @@ const byte screenItems1 [] PROGMEM = {
   (0 << 3) | (5),  24,    0x80 | 0x00 | 10
 };
 
+#define RESERVED_TEXT 16
+
 const char textContents [] PROGMEM = {
   // 0
   'A','B','C','D',
