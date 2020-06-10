@@ -23,7 +23,7 @@
  *   6x8
  *   8x16
  *   Menu Icons
- *   QR Code
+ *   Graphics
  * 
  * Power on:
  * set up buttons
@@ -52,7 +52,7 @@
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
-const DCfont * const fonts[] PROGMEM = { FONT6X8, FONT8X16, &symbolFont, &qrCodeFont };
+const DCfont * const fonts[] PROGMEM = { FONT6X8, FONT8X16, &symbolFont, &graphicFont };
 
 static bool eepromOk = false;
 static uint8_t currentContrast = 16;
