@@ -53,32 +53,45 @@ const byte header [] PROGMEM = {
 // The first screen shows the QR Code, and is not editable
 const byte screenItems0 [] PROGMEM = {
 // X times 8  Y , offset,  Dbl   font   length
-  (0 << 3) | (0),  0,      0x80 | 0x60 | 4,
-  (0 << 3) | (2),  4,      0x80 | 0x60 | 4,
-  (0 << 3) | (4),  8,      0x80 | 0x60 | 4,
-  (0 << 3) | (6),  12,     0x80 | 0x60 | 4
+  (0 << 3) | (0),  0,      0x80 | 0x60 | 1
 };
 
 const byte screenItems1 [] PROGMEM = {
 // X times 8  Y , offset,  Dbl   font   length
-  (0 << 3) | (0),  16,    0x80 | 0x20 | 8,
-  (0 << 3) | (5),  24,    0x80 | 0x00 | 10
+  (0 << 3) | (0), 1,      0x80 | 0x20 | 8,
+  (0 << 3) | (5), 9,      0x80 | 0x00 | 10
 };
 
-#define RESERVED_TEXT 16
+const byte screenItems2 [] PROGMEM = {
+// X times 8  Y , offset,  Dbl   font   length
+  (0 << 3) | (2), 19,     0x80 | 0x00 | 10,
+  (1 << 3) | (5), 29,     0x00 | 0x20 | 14
+};
+
+const byte screenItems3 [] PROGMEM = {
+// X times 8  Y , offset,  Dbl   font   length
+  (0 << 3) | (0), 19,     0x00 | 0x00 | 5,
+  (5 << 3) | (0), 29,     0x00 | 0x00 | 14,
+  (0 << 3) | (1), 44,     0x00 | 0x00 | 12,
+  (0 << 3) | (2), 44,     0x00 | 0x00 | 12,
+  (0 << 3) | (3), 44,     0x00 | 0x00 | 12,
+  (0 << 3) | (4), 44,     0x00 | 0x00 | 12
+};
+
+#define RESERVED_TEXT 1
 
 const char textContents [] PROGMEM = {
   // 0
-  'A','B','C','D',
-  // 4
-  'E','F','G','H',
-  // 8
-  'I','J','K','L',
-  // 12
-  'M','N','O','P',
+  'A',
 
-  // 16
+  // 1
   'D','a','t','a','c','u','t','e',
-  // 24
+  // 9
   'N','a','m','e',' ','B','a','d','g','e',
+  // 19
+  'F','i','r','s','t',' ','N','a','m','e',
+  // 29
+  'L','o','n','g',' ','L','a','s','t',' ','N','a','m','e',' ',
+  // 44
+  'A','d','d','r','e','s','s',' ','L','i','n','e'
 };

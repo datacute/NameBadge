@@ -4,7 +4,7 @@
  * Displays a name badge.
  * 
  * When using Spence Konde's ATTinyCore https://github.com/SpenceKonde/ATTinyCore
- * and using a chip without Optiboot, with LTO enabled, this sketch takes 8132 bytes of flash.
+ * and using a chip without Optiboot, with LTO enabled, this sketch takes 8054 bytes of flash.
  * 
  * The Name Badge contains 5 screens
  * A screen is a list of 16 items
@@ -548,39 +548,16 @@ void drawTextInsertDeleteMenu(void) {
   showTextSelection(currentItemCharacterPos, currentItemCharacterPos);
 }
 void textInsertAction(void) {
-  if ((itemLength == 31) || (itemOffset == 0)) return;
+  if (itemLength == 31) return;
   // All items that start after get shifted. All items that start before and end on or after get lengthened
-  uint8_t insertPosition = itemOffset + currentItemCharacterPos;
-  uint8_t s = currentScreen;
-  uint8_t i = currentScreenItem;
-  for (currentScreen = 0; currentScreen < NUMBER_OF_SCREENS; currentScreen++) {
-    for (uint8_t item = 0; item < ITEMS_PER_SCREEN; item++) {
-      currentScreenItem = item;
-      currentItemChanged();
-      if (itemOffset <= insertPosition) {
-        if (itemOffset + itemLength > insertPosition) {
-          selectTextLongerAction();
-        }
-      } else {
-        if ((uint16_t)itemOffset + itemLength >= 256) {
-          selectTextShorterAction();
-        }
-        selectTextRightAction();
-      }
-    }
-  }
-  // All the characters get shifted.
-  for (uint16_t p = 511; p >= NAMEBADGE_TEXT_BASE_ADDRESS + (uint16_t)insertPosition + 1; p--) {
-    uint8_t c = EEPROM.read(p - 1);
-    EEPROM.write(p, c);
-  }
-  currentScreen = s;
-  currentScreenItem = i;
-  currentItemChanged();
+  commonInsertDeleteAction(false);
 }
 void textDeleteAction(void) {
   if (itemLength == 0) return;
   // All items that start after get shifted. All items that start before and end on or after get shortened
+  commonInsertDeleteAction(true);
+}
+void commonInsertDeleteAction(bool deleting) {
   uint8_t insertPosition = itemOffset + currentItemCharacterPos;
   uint8_t s = currentScreen;
   uint8_t i = currentScreenItem;
@@ -590,17 +567,35 @@ void textDeleteAction(void) {
       currentItemChanged();
       if (itemOffset <= insertPosition) {
         if (itemOffset + itemLength > insertPosition) {
-          selectTextShorterAction();
+          if (deleting) {
+            selectTextShorterAction();
+          } else {
+            selectTextLongerAction();
+          }
         }
       } else {
-        selectTextLeftAction();
+        if (deleting) {
+          selectTextLeftAction();
+        } else {
+          if ((uint16_t)itemOffset + itemLength >= 256) {
+            selectTextShorterAction();
+          }
+          selectTextRightAction();
+        }
       }
     }
   }
   // All the characters get shifted.
-  for (uint16_t p = NAMEBADGE_TEXT_BASE_ADDRESS + insertPosition; p < 511; p++) {
-    uint8_t c = EEPROM.read(p + 1);
-    EEPROM.write(p, c);
+  if (deleting) {
+    for (uint16_t p = NAMEBADGE_TEXT_BASE_ADDRESS + insertPosition; p < 511; p++) {
+      uint8_t c = EEPROM.read(p + 1);
+      EEPROM.write(p, c);
+    }
+  } else {
+    for (uint16_t p = 511; p >= NAMEBADGE_TEXT_BASE_ADDRESS + (uint16_t)insertPosition + 1; p--) {
+      uint8_t c = EEPROM.read(p - 1);
+      EEPROM.write(p, c);
+    }
   }
   currentScreen = s;
   currentScreenItem = i;
@@ -644,23 +639,37 @@ void settingsResetAction(void) {
   }
 
   // Item Definitions
+  uint16_t screenItemOffset = NAMEBADGE_ITEM_BASE_ADDRESS;
   for (uint16_t offset = 0; offset < sizeof(screenItems0); offset++) {
-    EEPROM.write(NAMEBADGE_ITEM_BASE_ADDRESS + offset, pgm_read_byte(&screenItems0[offset]));
+    EEPROM.write(screenItemOffset + offset, pgm_read_byte(&screenItems0[offset]));
   }
 
+  uint16_t screenItemsSize = ITEMS_PER_SCREEN * BYTES_PER_ITEM;
+  screenItemOffset += screenItemsSize;
   for (uint16_t offset = 0; offset < sizeof(screenItems1); offset++) {
     uint8_t itemByte = pgm_read_byte(&screenItems1[offset]);
-    EEPROM.write(NAMEBADGE_ITEM_BASE_ADDRESS + ITEMS_PER_SCREEN * BYTES_PER_ITEM + offset, itemByte);
-    EEPROM.write(NAMEBADGE_ITEM_BASE_ADDRESS + ITEMS_PER_SCREEN * BYTES_PER_ITEM * 2 + offset, itemByte);
-    EEPROM.write(NAMEBADGE_ITEM_BASE_ADDRESS + ITEMS_PER_SCREEN * BYTES_PER_ITEM * 3 + offset, itemByte);
-    EEPROM.write(NAMEBADGE_ITEM_BASE_ADDRESS + ITEMS_PER_SCREEN * BYTES_PER_ITEM * 4 + offset, itemByte);
+    EEPROM.write(screenItemOffset + offset, itemByte);
   }
+
+  screenItemOffset += screenItemsSize;
+  for (uint16_t offset = 0; offset < sizeof(screenItems2); offset++) {
+    uint8_t itemByte = pgm_read_byte(&screenItems2[offset]);
+    EEPROM.write(screenItemOffset + offset, itemByte);
+  }
+
+  screenItemOffset += screenItemsSize;
+  for (uint16_t offset = 0; offset < sizeof(screenItems3); offset++) {
+    uint8_t itemByte = pgm_read_byte(&screenItems3[offset]);
+    EEPROM.write(screenItemOffset + offset, itemByte);
+  }
+
   // Item Contents
-  for (uint16_t offset = 0; offset < sizeof(textContents); offset++) {
-    EEPROM.write(NAMEBADGE_TEXT_BASE_ADDRESS + offset, pgm_read_byte(&textContents[offset]));
-  }
-  for (uint16_t offset = sizeof(textContents); offset < 256; offset++) {
-    EEPROM.write(NAMEBADGE_TEXT_BASE_ADDRESS + offset, ' ');
+  for (uint16_t offset = 0; offset < 256; offset++) {
+    char c = ' ';
+    if (offset < sizeof(textContents)) {
+      c = pgm_read_byte(&textContents[offset]);
+    }
+    EEPROM.write(NAMEBADGE_TEXT_BASE_ADDRESS + offset, c);
   }
   eepromOk = true;
   currentScreen = 0;
