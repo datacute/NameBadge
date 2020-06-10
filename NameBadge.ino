@@ -111,7 +111,7 @@ void setupInputs() {
 }
 
 void setupOLED(void) {
-  oled.begin(128, 64, sizeof(tiny4koled_init_128x64r), tiny4koled_init_128x64r);
+  oled.begin(128, 64, sizeof(tiny4koled_init_128x64br), tiny4koled_init_128x64br);
 }
 
 static void setupFromEEPROM() {
