@@ -41,7 +41,7 @@
 #include <Tiny4kOLED.h>
 #include "eeprom_contents.h"
 #include "symbol_font.h"
-#include "qr_code_font.h"
+#include "graphics_font.h"
 #include "menus.h"
 
 // Routines to set and clear bits (used in the sleep code)
