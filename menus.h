@@ -160,10 +160,10 @@ void selectTextShorterAction(void);
 
 const MenuItem selectTextMenuItems[4] PROGMEM = {
 // name             action fn
-  {LEFT_NAME,       selectTextLeftAction    },
-  {RIGHT_NAME,      selectTextRightAction   },
   {LONGER_NAME,     selectTextLongerAction  },
-  {SHORTER_NAME,    selectTextShorterAction }
+  {SHORTER_NAME,    selectTextShorterAction },
+  {RIGHT_NAME,      selectTextRightAction   },
+  {LEFT_NAME,       selectTextLeftAction    }
 };
 
 /*

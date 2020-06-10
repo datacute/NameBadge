@@ -59,11 +59,11 @@ When the device is first turned on, the **Settings** menu is shown, allowing the
 
 The menu system may seem quite extensive. The reason is that in order to support single-button operation, there needs to be a lot of menu options.
 
-| Menus                             | More Menus                              | Lots of Menus                               |
-| --------------------------------- | --------------------------------------- | ------------------------------------------- |
-| ![Main Menu][MainMenu]            | ![Edit Item Menu][EditItemMenu]         | ![Change Location Menu][ChangeLocationMenu] |
-| ![Alter Text Menu][AlterTextMenu] | ![Edit Text Menu][EditTextMenu]         | ![Select Text Menu][SelectTextMenu]         |
-| ![Settings Menu][SettingsMenu]    | ![Insert/Delete Menu][InsertDeleteMenu] |                                             |
+|                                   |                                             |                                         |
+| --------------------------------- | ------------------------------------------- | --------------------------------------- |
+| ![Main Menu][MainMenu]            | ![Select Text Menu][SelectTextMenu]         | ![Settings Menu][SettingsMenu]          |
+| ![Edit Item Menu][EditItemMenu]   | ![Change Location Menu][ChangeLocationMenu] |                                         |
+| ![Alter Text Menu][AlterTextMenu] | ![Edit Text Menu][EditTextMenu]             | ![Insert/Delete Menu][InsertDeleteMenu] |
 
 (*Sorry for the poor image quality!*)
 
@@ -78,7 +78,19 @@ A short press on the button will move the menu cursor down, cycling through the 
 The **Main Menu** is opened by a long press on the button, or a press of the second button. It provides the entry point for editing the current screen. To edit different screens, change screens before opening the menu. (By design, one screen is unable to be edited, so that suppliers can ensure that their custom screen is always available. The **Main Menu** is not able to be opened when that screen is shown.)
 
 - **`Next`** and **`Prev`** change the current text item being edited.
-- **`Edit Item`**, **`Alter Text`**, and **`Settings`** open the respective menus.
+- **`Select Text`**, **`Edit Item`**, and **`Settings`** open the respective menus.
+
+### Select Text Menu
+
+![Select Text Menu][SelectTextMenu]
+
+Text items on screen show a short selection from a longer text made up of all the items' texts joined together. This makes it easy to show your name on several screens, by re-selecting the same portion for another item.
+
+Items cannot be edited until they have a selection of text to edit, so for new items, the first main menu option to use is to select text, and in this menu the first menu option to use is to make the text selection **`Longer`**, then move the selection **`Right`** or **`Left`** to an unused portion of the text.
+
+When editing the items, it is possible to **`Insert`** and **`Delete`**, however those actions are fairly slow due to needing to rewrite large portions of the EEPROM. It is better to start with a selection that is lognger than you need, then come back to the text selection menu and make it **`Shorter`** once you know how long it needs to be.
+
+If 250 or so characters of text will be more than enough for you, then leaving some space between items' selections will make it easier to change things later.
 
 ### Edit Item Menu
 
@@ -95,12 +107,6 @@ From this menu, all the attributes of the current text item (selected from the *
 ### Change Location Menu
 
 ![Change Location Menu][ChangeLocationMenu]
-
-TODO
-
-### Select Text Menu
-
-![Select Text Menu][SelectTextMenu]
 
 TODO
 
